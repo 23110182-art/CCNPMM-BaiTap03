@@ -705,13 +705,4 @@ VITE_BACKEND_URL=http://localhost:8080
 **Nguyên nhân:** `AuthContext` chưa được cập nhật  
 **Giải pháp:** Kiểm tra trong `login.jsx`, `setAuth(...)` có được gọi sau khi login thành công không
 
----
 
-## Tác giả
-
-**ThS. Nguyễn Hữu Trung**  
-Khoa Công Nghệ Thông Tin  
-Trường Đại học Sư Phạm Kỹ Thuật TP.HCM  
-📧 trungnh@hcmute.edu.vn  
-📱 090.861.7108  
-📺 https://www.youtube.com/@baigiai
