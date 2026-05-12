@@ -1,14 +1,16 @@
-const mongoose = require("mongoose");
+require("dotenv").config();
 
-// Định nghĩa schema (cấu trúc) cho collection "user" trong MongoDB
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  password: String,
-  role: String,
-});
+let User;
 
-// Tạo Model từ schema - MongoDB sẽ tạo collection tên "users" (tự động thêm 's')
-const User = mongoose.model("user", userSchema);
+switch (process.env.DB_TYPE) {
+  case "mysql":
+    User = require("./mysql/user.model");
+    break;
+
+  case "mongodb":
+  default:
+    User = require("./mongodb/user.model");
+    break;
+}
 
 module.exports = User;
