@@ -2,6 +2,7 @@ const {
   createUserService,
   loginService,
   getUserService,
+  logoutService,
 } = require("../services/userService");
 
 /**
@@ -45,9 +46,19 @@ const getAccount = async (req, res) => {
   return res.status(200).json(req.user);
 };
 
+// Controller xử lý đăng xuất (xóa token ở client)
+const handleLogout = async (req, res) => {
+  // Ở đây do chúng ta không lưu token ở server nên việc logout chỉ cần xóa token ở client là được
+
+  const result = await logoutService();
+  // Nếu muốn có thêm tính năng blacklist token thì có thể lưu token vào Redis hoặc database và kiểm tra ở middleware auth.js
+  return res.status(200).json({ message: "Logout successful" });
+};
+
 module.exports = {
   createUser,
   handleLogin,
   getUser,
   getAccount,
+  handleLogout,
 };
