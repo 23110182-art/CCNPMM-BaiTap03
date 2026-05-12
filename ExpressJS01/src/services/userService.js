@@ -1,103 +1,127 @@
 require("dotenv").config();
+
 const User = require("../models/user");
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
 const saltRounds = 10;
 
-/**
- * Service tạo user mới (Register)
- * - Kiểm tra email đã tồn tại chưa
- * - Hash password trước khi lưu
- * - Lưu user vào database
- */
+// ==================================================
+// REGISTER SERVICE
+// ==================================================
 const createUserService = async (name, email, password) => {
   try {
-    // Kiểm tra user đã tồn tại chưa
-    const user = await User.findOne({ email });
+    // kiểm tra email đã tồn tại chưa
+    const user = await User.findByEmail(email);
+
     if (user) {
-      console.log(`>>> user exist, chọn 1 email khác: ${email}`);
-      return null;
+      return {
+        EC: 1,
+        EM: "Email đã tồn tại",
+      };
     }
 
-    // Hash password trước khi lưu vào DB
+    // hash password
     const hashPassword = await bcrypt.hash(password, saltRounds);
 
-    // Lưu user vào database
-    let result = await User.create({
-      name: name,
-      email: email,
+    // tạo user mới
+    const newUser = await User.createUser({
+      name,
+      email,
       password: hashPassword,
       role: "User",
     });
-    return result;
+
+    return {
+      EC: 0,
+      EM: "Tạo user thành công",
+      data: newUser,
+    };
   } catch (error) {
     console.log(error);
-    return null;
+
+    return {
+      EC: -1,
+      EM: "Lỗi server",
+    };
   }
 };
 
-/**
- * Service xử lý đăng nhập (Login)
- * - Tìm user theo email
- * - So sánh password đã hash
- * - Tạo JWT access token nếu đúng
- */
-const loginService = async (email1, password) => {
+// ==================================================
+// LOGIN SERVICE
+// ==================================================
+const loginService = async (email, password) => {
   try {
-    // Tìm user theo email
-    const user = await User.findOne({ email: email1 });
-    if (user) {
-      // So sánh password nhập vào với password đã hash trong DB
-      const isMatchPassword = await bcrypt.compare(password, user.password);
-      if (!isMatchPassword) {
-        return {
-          EC: 2,
-          EM: "Email/Password không hợp lệ",
-        };
-      } else {
-        // Tạo payload chứa thông tin user để ký vào JWT
-        const payload = {
-          email: user.email,
-          name: user.name,
-        };
+    // tìm user theo email
+    const user = await User.findByEmail(email);
 
-        // Ký JWT token với secret key và thời hạn từ .env
-        const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
-          expiresIn: process.env.JWT_EXPIRE,
-        });
-
-        return {
-          EC: 0,
-          access_token,
-          user: {
-            email: user.email,
-            name: user.name,
-          },
-        };
-      }
-    } else {
+    if (!user) {
       return {
         EC: 1,
         EM: "Email/Password không hợp lệ",
       };
     }
+
+    // so sánh password
+    const isMatchPassword = await bcrypt.compare(password, user.password);
+
+    if (!isMatchPassword) {
+      return {
+        EC: 2,
+        EM: "Email/Password không hợp lệ",
+      };
+    }
+
+    // payload JWT
+    const payload = {
+      email: user.email,
+      name: user.name,
+    };
+
+    // tạo access token
+    const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRE,
+    });
+
+    return {
+      EC: 0,
+      EM: "Đăng nhập thành công",
+      access_token,
+      user: {
+        email: user.email,
+        name: user.name,
+      },
+    };
   } catch (error) {
     console.log(error);
-    return null;
+
+    return {
+      EC: -1,
+      EM: "Lỗi server",
+    };
   }
 };
 
-/**
- * Service lấy danh sách tất cả user
- * - Trả về tất cả user, ẩn trường password
- */
+// ==================================================
+// GET ALL USERS
+// ==================================================
 const getUserService = async () => {
   try {
-    let result = await User.find({}).select("-password");
-    return result;
+    const users = await User.getAllUsers();
+
+    return {
+      EC: 0,
+      EM: "Lấy danh sách user thành công",
+      data: users,
+    };
   } catch (error) {
     console.log(error);
-    return null;
+
+    return {
+      EC: -1,
+      EM: "Lỗi server",
+    };
   }
 };
 
