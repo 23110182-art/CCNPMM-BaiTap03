@@ -23,20 +23,26 @@ function App() {
   useEffect(() => {
     const fetchAccount = async () => {
       setAppLoading(true);
-      // Gọi API account - token được tự động gắn bởi axios interceptor
-      // API này có delay 3 giây (middleware delay ở backend)
-      const res = await axios.get(`/v1/api/account`);
-      if (res && !res.message) {
-        // Token hợp lệ -> cập nhật trạng thái đăng nhập
-        setAuth({
-          isAuthenticated: true,
-          user: {
-            email: res.email,
-            name: res.name,
-          },
-        });
+      try {
+        // Gọi API account - token được tự động gắn bởi axios interceptor
+        // API này có delay 3 giây (middleware delay ở backend)
+        const res = await axios.get(`/v1/api/account`);
+        if (res && !res.message) {
+          // Token hợp lệ -> cập nhật trạng thái đăng nhập
+          setAuth({
+            isAuthenticated: true,
+            user: {
+              email: res.email,
+              name: res.name,
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching account:", error);
+        // Token không hợp lệ hoặc API lỗi -> giữ isAuthenticated=false
+      } finally {
+        setAppLoading(false);
       }
-      setAppLoading(false);
     };
     fetchAccount();
   }, []);

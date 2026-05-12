@@ -32,6 +32,13 @@ const User = {
 
     return rows;
   },
+
+  updatePassword: async (email, password) => {
+    await pool.execute(
+      "UPDATE users SET password = ? WHERE email = ?",
+      [password, email]
+    );
+  },
 };
 
 module.exports = User;
