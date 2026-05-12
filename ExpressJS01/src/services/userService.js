@@ -125,8 +125,26 @@ const getUserService = async () => {
   }
 };
 
+//Logout service
+const logoutService = async () => {
+  try {
+    return {
+      EC: 0,
+      EM: "Đăng xuất thành công",
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      EC: -1,
+      EM: "Lỗi server",
+    };
+  }
+};
+
 module.exports = {
   createUserService,
   loginService,
   getUserService,
+  logoutService,
 };

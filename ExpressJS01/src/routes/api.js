@@ -4,6 +4,7 @@ const {
   handleLogin,
   getUser,
   getAccount,
+  handleLogout,
 } = require("../controllers/userController");
 const auth = require("../middleware/auth");
 const delay = require("../middleware/delay");
@@ -29,5 +30,7 @@ routerAPI.get("/user", getUser);
 
 // GET /v1/api/account - Lấy thông tin tài khoản hiện tại (cần JWT + delay 3s)
 routerAPI.get("/account", delay, getAccount);
+
+routerAPI.post("/logout", handleLogout);
 
 module.exports = routerAPI; // export default
