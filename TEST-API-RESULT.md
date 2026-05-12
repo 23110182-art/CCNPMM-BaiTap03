@@ -91,3 +91,38 @@ Authorization: Bearer Token
 → Server trả 401: "Token bị hết hạn/hoặc không hợp lệ"
 
 ---
+
+### Bước 5: Quên mật khẩu
+```
+Method: POST
+URL: http://localhost:8080/v1/api/forgot-password
+Body json
+{
+    "email": "test1@gmail.com"
+}
+Kết quả: 200 OK
+{
+    "EC": 0,
+    "EM": "Đã gửi link reset password"
+}
+
+RESET LINK:
+http://localhost:3000/reset-password?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QxQGdtYWlsLmNvbSIsImlhdCI6MTc3ODU2NzgyMywiZXhwIjoxNzc4NTY4NDIzfQ.BXSmVYaT7XDsZDE_6ObjGMSE67supg8P0sM5ctAAEPc
+```
+
+
+### Bước 6: Đặt lại mật khẩu
+```
+Method: POST
+URL: http://localhost:8080/v1/api/reset-password
+Body json
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QxQGdtYWlsLmNvbSIsImlhdCI6MTc3ODU2NzgyMywiZXhwIjoxNzc4NTY4NDIzfQ.BXSmVYaT7XDsZDE_6ObjGMSE67supg8P0sM5ctAAEPc",
+    "newPassword": "test1123456789"
+}
+Kết quả: 200 OK
+{
+    "EC": 0,
+    "EM": "Đổi mật khẩu thành công"
+}
+```

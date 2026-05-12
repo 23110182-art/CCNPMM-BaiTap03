@@ -5,6 +5,8 @@ const {
   getUser,
   getAccount,
   handleLogout,
+  forgotPassword,
+  resetPassword,
 } = require("../controllers/userController");
 const auth = require("../middleware/auth");
 const delay = require("../middleware/delay");
@@ -32,5 +34,8 @@ routerAPI.get("/user", getUser);
 routerAPI.get("/account", delay, getAccount);
 
 routerAPI.post("/logout", handleLogout);
+
+routerAPI.post("/forgot-password", forgotPassword);
+routerAPI.post("/reset-password", resetPassword);
 
 module.exports = routerAPI; // export default

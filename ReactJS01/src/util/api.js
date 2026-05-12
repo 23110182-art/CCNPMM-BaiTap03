@@ -52,4 +52,32 @@ const getAccountApi = () => {
   return axios.get("/v1/api/account");
 };
 
-export { createUserApi, loginApi, getUserApi, getAccountApi };
+/**
+ * Gọi API quên mật khẩu
+ * POST /v1/api/forgot-password
+ * @param {string} email
+ */
+const forgotPasswordApi = (email) => {
+  const URL_API = "/v1/api/forgot-password";
+
+  return axios.post(URL_API, { email });
+};
+
+/**
+ * Gọi API reset mật khẩu
+ * POST /v1/api/reset-password
+ * @param {string} token
+ * @param {string} newPassword
+ */
+const resetPasswordApi = (token, newPassword) => {
+  const URL_API = "/v1/api/reset-password";
+
+  const data = {
+    token,
+    newPassword,
+  };
+
+  return axios.post(URL_API, data);
+};
+
+export { createUserApi, loginApi, getUserApi, getAccountApi, forgotPasswordApi, resetPasswordApi };

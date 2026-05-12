@@ -12,7 +12,7 @@ const jwt = require("jsonwebtoken");
  */
 const auth = (req, res, next) => {
   // Danh sách các route KHÔNG cần xác thực JWT
-  const white_lists = ["/", "/register", "/login"];
+  const white_lists = ["/", "/register", "/login", "/forgot-password", "/reset-password"];
 
   // Kiểm tra nếu route hiện tại thuộc white list -> bỏ qua xác thực
   if (white_lists.find((item) => "/v1/api" + item === req.originalUrl)) {
