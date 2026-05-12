@@ -5,6 +5,8 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const sendResetEmail = require("../config/mailer");
+
 const saltRounds = 10;
 
 // ==================================================
@@ -142,9 +144,75 @@ const logoutService = async () => {
   }
 };
 
+// ===============================
+// FORGOT PASSWORD
+// ===============================
+const forgotPasswordService = async (email) => {
+  const user = await User.findByEmail(email);
+
+  if (!user) {
+    return {
+      EC: 1,
+      EM: "Email không tồn tại",
+    };
+  }
+
+  // tạo reset token (JWT ngắn hạn)
+  const resetToken = jwt.sign(
+    { email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: "10m" }
+  );
+
+  // ở đây thường sẽ gửi email
+  console.log("RESET LINK:");
+  console.log(`http://localhost:3000/reset-password?token=${resetToken}`);
+
+    // gửi email thật
+  await sendResetEmail(email, resetToken);
+  return {
+    EC: 0,
+    EM: "Đã gửi link reset password",
+  };
+};
+
+// ===============================
+// RESET PASSWORD
+// ===============================
+const resetPasswordService = async (token, newPassword) => {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findByEmail(decoded.email);
+
+    if (!user) {
+      return {
+        EC: 1,
+        EM: "Token không hợp lệ",
+      };
+    }
+
+    const hashPassword = await bcrypt.hash(newPassword, 10);
+
+    await User.updatePassword(decoded.email, hashPassword);
+
+    return {
+      EC: 0,
+      EM: "Đổi mật khẩu thành công",
+    };
+  } catch (error) {
+    return {
+      EC: 1,
+      EM: "Token hết hạn hoặc không hợp lệ",
+    };
+  }
+};
+
 module.exports = {
   createUserService,
   loginService,
   getUserService,
   logoutService,
+  forgotPasswordService,
+  resetPasswordService,
 };

@@ -1,13 +1,5 @@
 import React, { useContext } from "react";
-import {
-  Button,
-  Col,
-  Divider,
-  Form,
-  Input,
-  notification,
-  Row,
-} from "antd";
+import { Button, Col, Divider, Form, Input, notification, Row } from "antd";
 import { loginApi } from "../util/api";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/context/auth.context";
@@ -117,8 +109,13 @@ const LoginPage = () => {
           </Link>
           <Divider />
           <div style={{ textAlign: "center" }}>
-            Chưa có tài khoản?{" "}
-            <Link to={"/register"}>Đăng ký tại đây</Link>
+            <div>
+              Chưa có tài khoản? <Link to={"/register"}>Đăng ký</Link>
+            </div>
+
+            <div style={{ marginTop: "8px" }}>
+              <Link to={"/forgot-password"}>Quên mật khẩu?</Link>
+            </div>
           </div>
         </fieldset>
       </Col>

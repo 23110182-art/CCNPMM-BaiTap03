@@ -47,6 +47,17 @@ const User = {
   getAllUsers: async () => {
     return await UserModel.find({}).select("-password");
   },
+
+  updatePassword: async (email, newPassword) => {
+    return await UserModel.updateOne(
+      { email },
+      {
+        $set: {
+          password: newPassword,
+        },
+      },
+    );
+  },
 };
 
 module.exports = User;

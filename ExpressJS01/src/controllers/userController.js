@@ -3,6 +3,8 @@ const {
   loginService,
   getUserService,
   logoutService,
+  forgotPasswordService,
+  resetPasswordService,
 } = require("../services/userService");
 
 /**
@@ -13,7 +15,6 @@ const {
 const createUser = async (req, res) => {
   const { name, email, password } = req.body;
   const data = await createUserService(name, email, password);
-  console.log("data from controller", data);
   return res.status(200).json(data);
 };
 
@@ -55,10 +56,30 @@ const handleLogout = async (req, res) => {
   return res.status(200).json({ message: "Logout successful" });
 };
 
+// gửi link reset
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  const result = await forgotPasswordService(email);
+
+  return res.json(result);
+};
+
+// reset password
+const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  const result = await resetPasswordService(token, newPassword);
+
+  return res.json(result);
+};
+
 module.exports = {
   createUser,
   handleLogin,
   getUser,
   getAccount,
   handleLogout,
+  forgotPassword,
+  resetPassword,
 };
